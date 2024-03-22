@@ -24,17 +24,17 @@ tiles = [
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
     0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0,
-    0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+    0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 # fmt: on
 
@@ -44,9 +44,7 @@ def square(x, y):
     path.up()
     path.goto(x, y)
     path.down()
-    path.begin_fill()
-
-    for count in range(4):
+    path.begin_fill()    for count in range(4):
         path.forward(20)
         path.left(90)
 
@@ -76,8 +74,14 @@ def valid(point):
     return point.x % 20 == 0 or point.y % 20 == 0
 
 
+def change(x, y):
+    "Change Pacman's direction if it's valid."
+    if valid(pacman + vector(x, y)):
+        aim.x = x
+        aim.y = y
+
 def world():
-    """Draw world using path."""
+    "Draw the world using path."
     bgcolor('black')
     path.color('blue')
 
@@ -167,14 +171,23 @@ def move():
 
 
 def change(x, y):
+
+    """Change Pacman's direction if it's valid."""
+=======
     "Change Pacman's direction if it's valid."
+
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
 
+
+def world():
+    """Draw the world using path."""
+=======
 # Asumiendo que la función world() es para dibujar el mundo, deberías tener algo como esto:
 def world():
     "Draw the world using path."
+
     bgcolor('black')
     path.color('blue')
 
@@ -191,6 +204,23 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
+
+def valid(point):
+    """Return True if point is valid in tiles."""
+    index = offset(point)
+
+    if tiles[index] == 0:
+        return False
+
+    index = offset(point + 19)
+
+    if tiles[index] == 0:
+        return False
+
+    return point.x % 20 == 0 or point.y % 20 == 0
+
+=======
+
 # La función setup() configura la ventana y los controles.
 setup(420, 420, 370, 0)
 hideturtle()
@@ -199,10 +229,13 @@ writer.goto(160, 160)
 writer.color('white')
 writer.write(state['score'])
 listen()
-onkey(lambda: change(5, 0), 'Right')
-onkey(lambda: change(-5, 0), 'Left')
-onkey(lambda: change(0, 5), 'Up')
-onkey(lambda: change(0, -5), 'Down')
+onkey(lambda: change(10, 0), 'Right')  # Cambio para hacer que Pacman se mueva más rápido 
+onkey(lambda: change(-10, 0), 'Left')  # Cambio para hacer que Pacman se mueva más rápido 
+onkey(lambda: change(0, 10), 'Up')     # Cambio para hacer que Pacman se mueva más rápido 
+onkey(lambda: change(0, -10), 'Down')  # Cambio para hacer que Pacman se mueva más rápido 
 world()
 move()
 done()
+
+
+
