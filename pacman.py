@@ -1,17 +1,5 @@
-"""Pacman, classic arcade game.
-
-Exercises
-
-1. Change the board.
-2. Change the number of ghosts.
-3. Change where pacman starts.
-4. Make the ghosts faster/slower.
-5. Make the ghosts smarter.
-"""
-
 from random import choice
 from turtle import *
-
 from freegames import floor, vector
 
 state = {'score': 0}
@@ -110,6 +98,9 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
+def calculate_intercept_point(pacman, aim, steps_ahead):
+    intercept_point = pacman + aim * steps_ahead
+    return intercept_point
 
 def move():
     """Move pacman and all ghosts."""
@@ -133,6 +124,24 @@ def move():
     up()
     goto(pacman.x + 10, pacman.y + 10)
     dot(20, 'yellow')
+# Inicio de la lógica de emboscada
+    steps_ahead = 20  # Puedes ajustar esto para cambiar la anticipación de los fantasmas
+    intercept_point = calculate_intercept_point(pacman, aim, steps_ahead)
+
+    for ghost in ghosts:
+        if valid(ghost[0] + ghost[1]):
+            ghost[0].move(ghost[1])
+        else:
+            # Decidir el nuevo movimiento en base al punto de intercepción
+            options = [vector(5, 0), vector(-5, 0), vector(0, 5), vector(0, -5)]
+            options.sort(key=lambda option: (ghost[0] + option - intercept_point).length())
+            ghost[1] = options[0]
+
+        up()
+        goto(ghost[0].x + 10, ghost[0].y + 10)
+        dot(20, 'red')
+    
+    update()
 
     for point, course in ghosts:
         if valid(point + course):
@@ -162,13 +171,23 @@ def move():
 
 
 def change(x, y):
+
     """Change Pacman's direction if it's valid."""
+=======
+    "Change Pacman's direction if it's valid."
+
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
 
+
 def world():
     """Draw the world using path."""
+=======
+# Asumiendo que la función world() es para dibujar el mundo, deberías tener algo como esto:
+def world():
+    "Draw the world using path."
+
     bgcolor('black')
     path.color('blue')
 
@@ -185,6 +204,7 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
+
 def valid(point):
     """Return True if point is valid in tiles."""
     index = offset(point)
@@ -199,7 +219,9 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
+=======
 
+# La función setup() configura la ventana y los controles.
 setup(420, 420, 370, 0)
 hideturtle()
 tracer(False)
